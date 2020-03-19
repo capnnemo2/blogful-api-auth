@@ -36,23 +36,20 @@ articlesRouter
   });
 
 /* async/await syntax for promises */
-async function checkArticleExists(req, res, next) {
-  try {
-    const article = await ArticlesService.getById(
-      req.app.get("db"),
-      req.params.article_id
-    );
+function checkArticleExists(req, res, next) {
+  ArticlesService.getById(req.app.get("db"), req.params.article_id)
+    .then(article => {
+      if (!article)
+        return res.status(404).json({
+          error: `Article doesn't exist`
+        });
 
-    if (!article)
-      return res.status(404).json({
-        error: `Article doesn't exist`
-      });
-
-    res.article = article;
-    next();
-  } catch (error) {
-    next(error);
-  }
+      res.article = article;
+      next();
+    })
+    .catch(error => {
+      next(error);
+    });
 }
 
 module.exports = articlesRouter;
