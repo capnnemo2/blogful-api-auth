@@ -24,7 +24,7 @@ describe("Auth Endpoints", function () {
   afterEach("cleanup", () => helpers.cleanTables(db));
 
   describe(`POST /api/auth/login`, () => {
-    this.beforeEach("insert users", () => helpers.seedUsers(db, testUsers));
+    beforeEach("insert users", () => helpers.seedUsers(db, testUsers));
     const requiredFields = ["user_name", "password"];
 
     requiredFields.forEach((field) => {
@@ -83,7 +83,7 @@ describe("Auth Endpoints", function () {
   });
 
   describe(`POST /api/auth/refresh`, () => {
-    this.beforeEach("insert users", () => helpers.seedUsers(db, testUsers));
+    beforeEach("insert users", () => helpers.seedUsers(db, testUsers));
 
     it(`responds 200 and JWT auth token using secret`, () => {
       const expectedToken = jwt.sign(
