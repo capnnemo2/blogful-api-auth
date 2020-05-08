@@ -2,19 +2,19 @@ const knex = require("knex");
 const app = require("../src/app");
 const helpers = require("./test-helpers");
 
-describe("Articles Endpoints", function() {
+describe("Articles Endpoints", function () {
   let db;
 
   const {
     testUsers,
     testArticles,
-    testComments
+    testComments,
   } = helpers.makeArticlesFixtures();
 
   before("make knex instance", () => {
     db = knex({
       client: "pg",
-      connection: process.env.TEST_DB_URL
+      connection: process.env.TEST_DB_URL,
     });
     app.set("db", db);
   });
@@ -28,9 +28,7 @@ describe("Articles Endpoints", function() {
   describe(`GET /api/articles`, () => {
     context(`Given no articles`, () => {
       it(`responds with 200 and an empty list`, () => {
-        return supertest(app)
-          .get("/api/articles")
-          .expect(200, []);
+        return supertest(app).get("/api/articles").expect(200, []);
       });
     });
 
@@ -40,7 +38,7 @@ describe("Articles Endpoints", function() {
       );
 
       it("responds with 200 and all of the articles", () => {
-        const expectedArticles = testArticles.map(article =>
+        const expectedArticles = testArticles.map((article) =>
           helpers.makeExpectedArticle(testUsers, article, testComments)
         );
         return supertest(app)
@@ -53,7 +51,7 @@ describe("Articles Endpoints", function() {
       const testUser = helpers.makeUsersArray()[1];
       const {
         maliciousArticle,
-        expectedArticle
+        expectedArticle,
       } = helpers.makeMaliciousArticle(testUser);
 
       beforeEach("insert malicious article", () => {
@@ -64,7 +62,7 @@ describe("Articles Endpoints", function() {
         return supertest(app)
           .get(`/api/articles`)
           .expect(200)
-          .expect(res => {
+          .expect((res) => {
             expect(res.body[0].title).to.eql(expectedArticle.title);
             expect(res.body[0].content).to.eql(expectedArticle.content);
           });
@@ -109,7 +107,7 @@ describe("Articles Endpoints", function() {
       const testUser = helpers.makeUsersArray()[1];
       const {
         maliciousArticle,
-        expectedArticle
+        expectedArticle,
       } = helpers.makeMaliciousArticle(testUser);
 
       beforeEach("insert malicious article", () => {
@@ -121,7 +119,7 @@ describe("Articles Endpoints", function() {
           .get(`/api/articles/${maliciousArticle.id}`)
           .set("Authorization", helpers.makeAuthHeader(testUser))
           .expect(200)
-          .expect(res => {
+          .expect((res) => {
             expect(res.body.title).to.eql(expectedArticle.title);
             expect(res.body.content).to.eql(expectedArticle.content);
           });
