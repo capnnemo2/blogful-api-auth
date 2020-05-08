@@ -1,12 +1,12 @@
 const express = require("express");
 const ArticlesService = require("./articles-service");
-const { requireAuth } = require("../middleware/basic-auth");
+const { requireAuth } = require("../middleware/jwt-auth");
 
 const articlesRouter = express.Router();
 
 articlesRouter.route("/").get((req, res, next) => {
   ArticlesService.getAllArticles(req.app.get("db"))
-    .then(articles => {
+    .then((articles) => {
       res.json(articles.map(ArticlesService.serializeArticle));
     })
     .catch(next);
@@ -29,7 +29,7 @@ articlesRouter
       req.app.get("db"),
       req.params.article_id
     )
-      .then(comments => {
+      .then((comments) => {
         res.json(comments.map(ArticlesService.serializeArticleComment));
       })
       .catch(next);
@@ -38,16 +38,16 @@ articlesRouter
 /* async/await syntax for promises */
 function checkArticleExists(req, res, next) {
   ArticlesService.getById(req.app.get("db"), req.params.article_id)
-    .then(article => {
+    .then((article) => {
       if (!article)
         return res.status(404).json({
-          error: `Article doesn't exist`
+          error: `Article doesn't exist`,
         });
 
       res.article = article;
       next();
     })
-    .catch(error => {
+    .catch((error) => {
       next(error);
     });
 }
